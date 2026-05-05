@@ -3,6 +3,8 @@ import requests
 import pandas as pd
 import matplotlib.pyplot as plt
 
+BASE_URL = "https://sentiment-analysis-system-etlx.onrender.com"
+
 st.set_page_config(layout="wide")
 st.title("Text Classification Model")
 l_col,c_col,r_col=st.columns([1.5,4,1.5])
@@ -10,7 +12,7 @@ l_col,c_col,r_col=st.columns([1.5,4,1.5])
 @st.cache_data(ttl=60)
 def get_models():
     try:
-        return requests.get("http://backend:8000/models", timeout=5).json()
+        return requests.get(f"{BASE_URL}/models", timeout=5).json()
     except:
         return ["Backend not available!"]
 
@@ -26,7 +28,7 @@ with c_col:
         
         else:
             response=requests.post(
-                "http://backend:8000/predict",
+                f"{BASE_URL}/predict",
                 json={"text":user_input, "model":model_choice}
             )
 
@@ -75,7 +77,7 @@ with l_col:
     st.subheader("Logs")
 
     try:
-        response=requests.get("http://backend:8000/logs")
+        response=requests.get(f"{BASE_URL}/logs")
         logs=response.json()
 
         df_logs=pd.DataFrame(logs)
@@ -98,7 +100,7 @@ with l_col:
 
     st.subheader("Overall Sentiment Trend")
     try:
-        response = requests.get("http://backend:8000/analytics")
+        response = requests.get(f"{BASE_URL}/analytics")
 
         if response.status_code == 200:
             avg = response.json()
@@ -122,7 +124,7 @@ with l_col:
 with r_col:
     st.subheader("Prediction Distribution")
 
-    response = requests.get("http://backend:8000/count_predictions")
+    response = requests.get(f"{BASE_URL}/count_predictions")
     preds=response.json()
 
     if len(preds)==0:
@@ -154,7 +156,7 @@ with r_col:
         #Average Latency
         st.subheader("Average Latency Per Model")
 
-        response = requests.get("http://backend:8000/avg_latency")
+        response = requests.get(f"{BASE_URL}/avg_latency")
         avg_lat = response.json()
 
         df=pd.DataFrame(avg_lat)
