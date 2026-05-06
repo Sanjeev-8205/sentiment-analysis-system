@@ -11,9 +11,11 @@ venv/
 backend/logs/
 
 #Models
-backend/models/*
-!backend/models/logistic_regression/
-!backend/models/logistic_regression/v1/
+backend/models/bert_base_uncased/
+backend/models/bert_base_uncased/v1/
+backend/models/bilstm/
+backend/models/bilstm/v1/
+
 
 #Cache
 app/cache/
