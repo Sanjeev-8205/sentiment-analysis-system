@@ -1,25 +1,22 @@
-from pathlib import Path
-import csv
-from datetime import datetime
-
-BASE_DIR=Path(__file__).resolve()
-log_path = BASE_DIR.parent.parent.parent/ "logs" / "logs.csv"
+from app.core.database import SessionLocal
+from models.log_models import Log
 
 def log_predictions(text, prediction, prob, model, latency):
-        if not log_path.exists():
-            with open(log_path, "w", newline="", encoding="utf-8") as f:
-                writer = csv.writer(f)
-                writer.writerow(["Text", "Prediction", "Negative", "Neutral", "Positive", "Model", "Latency", "Timestamp"])
+    db=SessionLocal()
 
-        with open(log_path, "a", newline="", encoding="utf-8") as f:
-            writer=csv.writer(f)
-            writer.writerow([
-                text,
-                int(prediction),
-                prob[0], #negative
-                prob[1], #neutral
-                prob[2],  #positive
-                model,
-                latency,
-                datetime.now()
-            ])
+    try:
+        logs=Log(
+            text=text,
+            prediction=prediction,
+            model=model,
+            negative=prob[0],
+            neutral=prob[1],
+            positive=prob[2],
+            latency=latency
+        )
+
+        db.add(logs)
+        db.commit()
+
+    finally:
+        db.close()

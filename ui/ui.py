@@ -87,8 +87,8 @@ with l_col:
             2: "Positive"
         }
 
-        if len(df_logs)>0 and "Prediction" in df_logs.columns:
-            df_logs["Prediction"] = df_logs["Prediction"].map(label_map)
+        if len(df_logs)>0 and "prediction" in df_logs.columns:
+            df_logs["prediction"] = df_logs["prediction"].map(label_map)
             st.dataframe(df_logs)
         else:
             "No logs yet!"
@@ -160,4 +160,4 @@ with r_col:
         avg_lat = response.json()
 
         df=pd.DataFrame(avg_lat)
-        st.bar_chart(df.set_index("Model"))
+        st.bar_chart(df[["model", "avg_latency"]].set_index("Model"))

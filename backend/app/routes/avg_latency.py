@@ -1,20 +1,29 @@
 from fastapi import APIRouter
-from pathlib import Path
-import pandas as pd
+from sqlalchemy import func
+from app.core.database import SessionLocal
+from models.log_models import Log
 
 router=APIRouter()
 
-BASE_DIR = Path(__file__).resolve()
-
 @router.get("/avg_latency")
 def get_avg_latency():
-    log_path=BASE_DIR.parent.parent.parent / "logs" / "logs.csv"
+    db = SessionLocal()
 
-    if not log_path.exists():
-        return {"data":[]}
+    try:
+        average_latency=db.query(
+            Log.model,
+            func.avg(Log.latency).label("avg_latency")
+        ).group_by(Log.model).all()
+
+        analytics = []
+
+        for row in average_latency:
+            analytics.append({
+                "model": row[0],
+                "latency": float(row[1])
+            })
+
+        return analytics
     
-    logs=pd.read_csv(log_path)
-
-    avg_latency=logs.groupby("Model")["Latency"].mean().reset_index(name="Avg_latency")
-
-    return avg_latency.to_dict(orient="records")
+    finally:
+        db.close()

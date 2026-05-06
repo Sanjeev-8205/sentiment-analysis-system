@@ -13,3 +13,6 @@ tensorflow==2.19.0
 
 transformers==5.0.0
 torch==2.10.0 --index-url https://download.pytorch.org/whl/cpu
+
+sqlalchemy
+psycopg2-binary
