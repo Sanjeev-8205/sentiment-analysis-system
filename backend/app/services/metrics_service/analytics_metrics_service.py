@@ -111,10 +111,9 @@ def get_confidence_distribution(db):
     return results
 
 def get_recent_activity_feed(db):
-    model = InputData.model
-
     recent_activity = db.query(
         Log.prediction,
+        Log.model.label("model"),
         Log.timestamp,
         Log.latency
     ).order_by(Log.timestamp.desc()).first()
@@ -129,7 +128,7 @@ def get_recent_activity_feed(db):
     pred_map = {"0":"Negative", "1":"Neutral", "2":"Positive"}
     predicted_sentiment = pred_map.get(recent_activity[0], "unknown")
 
-    seconds_since_last_activity = datetime.now(UTC) - recent_activity[1]
+    seconds_since_last_activity = datetime.now(UTC) - recent_activity[2]
     
     total_seconds = seconds_since_last_activity.total_seconds()
     hours = int(total_seconds/3600)
@@ -145,7 +144,7 @@ def get_recent_activity_feed(db):
         res = f"{days} day{'s' if days!=1 else ''} ago"
 
     return {
-        "prediction": f"{model} predicted {predicted_sentiment}",
+        "prediction": f"{recent_activity.model} predicted {predicted_sentiment}",
         "recent_activity": res,
-        "Latency": round(recent_activity[2],3)
+        "Latency": round(recent_activity[3],3)
     }

@@ -37,10 +37,8 @@ def dashboard_metrics_aggregator():
         }
     
     except Exception as e:
-        traceback.print_exc()
-        
         return {
-            "error":str(e)
+            "error": traceback.format_exc()
         }
 
     finally:
