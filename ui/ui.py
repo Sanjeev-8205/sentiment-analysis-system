@@ -257,7 +257,7 @@ with tab2:
                 confidence_distribution,
                 x = "Confidence",
                 y = "Count",
-
+                title = "Confidence Distribution"
             )
 
             st.plotly_chart(
@@ -284,7 +284,7 @@ with tab3:
     col1, col2 = st.columns(2)
 
     with col1:
-        p95_latency = advanced["p95_latency"]
+        p95_latency = advanced.get("p95_latency", 0) or 0
 
         st.metric(
             "p95_latency", f"{p95_latency:.3f}s" 

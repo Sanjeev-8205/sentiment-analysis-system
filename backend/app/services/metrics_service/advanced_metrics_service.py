@@ -12,7 +12,7 @@ def get_p95_latency(db):
         .within_group(Log.latency)
     ).scalar()
 
-    return p95_latency
+    return round(float(p95_latency or 0), 3)
 
 def get_failure_percent(db):
     status_ = db.query(
