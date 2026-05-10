@@ -52,7 +52,7 @@ with st.sidebar:
 
     st.divider()
 
-    st.Markdown("### Health Indicators")
+    st.markdown("### Health Indicators")
 
     #db_health
     db_status = health["db_health"]["database"]
