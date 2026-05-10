@@ -356,7 +356,10 @@ with tab3:
     #Drift indicators
     drift_indicators = advanced["drift_indicators"]
 
-    if not drift_indicators.empty:
+    if not drift_indicators:
+        st.info("You have not made any predictions yet. Make predictions to view drift data.")
+
+    else:
         shift_data = {
             key:value for key, value in drift_indicators.items() if "shift" in key
         }
@@ -396,8 +399,6 @@ with tab3:
             st.plotly_chart(
                 fig_rolling, width="stretch"
             )
-    else:
-        st.info("You have not made any predictions yet. Make predictions to view the results.")
 
 with tab4:
     st.subheader("System Health Monitoring")
@@ -555,7 +556,7 @@ with tab5:
 
     # Centerpiece - Main Logs
     st.markdown("### Inference Logs")
-    
+
     st.dataframe(
         filtered_logs,
         width="stretch",
