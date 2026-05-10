@@ -438,7 +438,7 @@ with tab4:
 
         st.subheader("Resource Monitoring")
         st.write("CPU Utilization")
-        st.progess(health["cpu_usage"][0] / 100)
+        st.progress(health["cpu_usage"][0] / 100)
 
     with right_col:
         st.subheader("Model Availability")
@@ -475,123 +475,131 @@ with tab4:
 with tab5:
     logs_df = pd.DataFrame(logs_data)
 
-    st.markdown("### Filters")
-
-    filter_col1, filter_col2, filter_col3 = st.columns(3)
-
-    with filter_col1:
-        selected_model_filter = st.selectbox(
-            "Model Filter",
-            ["All"] + list(logs_df["model"].unique())
-        )
-
-    with filter_col2:
-        selected_status_filter = st.selectbox(
-            "Status Filter",
-            ["All"] + list(logs_df["status"].unique())
-        )
-    
-    with filter_col3:
-        search_term = st.text_input(
-            "Search Prediction"
-        )
-
-    filtered_logs = logs_df.copy()
-
-    if selected_model_filter!= "All":
-        filtered_logs = filtered_logs[
-            filtered_logs["model"] == selected_model_filter
-        ]
-    
-    if selected_status_filter!= "All":
-        filtered_logs = filtered_logs[
-            filtered_logs["status"] == selected_status_filter
-        ]
-    
-    if search_term:
-        filtered_logs = filtered_logs[
-            filtered_logs["text"].contains(search_term, case = False)
-        ]
-    
-    #Log Metrics
-    st.markdown("### 📈 Log Metrics")
-
-    metric_col1, metric_col2, metric_col3, metric_col4 = st.columns(4)
-
-    with metric_col1:
-
-        st.metric(
-            "Total Logs",
-            len(filtered_logs)
-        )
-
-    with metric_col2:
-
-        st.metric(
-            "Avg Latency",
-            f"{filtered_logs['latency'].mean():.3f}s"
-        )
-
-    with metric_col3:
-
-        error_count = len(
-            filtered_logs[
-                filtered_logs["status"] != "success"
-            ]
-        )
-
-        st.metric(
-            "Errors",
-            error_count
-        )
-
-    with metric_col4:
-
-        most_used_model = (
-            filtered_logs["model"]
-            .mode()[0]
-        )
-
-        st.metric(
-            "Most Used Model",
-            most_used_model.upper()
-        )
-
-    # Centerpiece - Main Logs
-    st.markdown("### Inference Logs")
-
-    st.dataframe(
-        filtered_logs,
-        width="stretch",
-        height=400
-    )
-
-    # recent failures section
-    failure_logs = filtered_logs[
-        filtered_logs["status"] == "failure"
-    ]
-
-    st.markdown("### Recent Failures")
-    if failure_logs.empty:
-        st.success("No recent failures detected.")
+    if logs_df.empty:
+        st.info("No logs available yet. Make predictions to populate inference logs.")
     else:
-        st.dataframe(
-            failure_logs, width="stretch"
+        st.markdown("### Filters")
+
+        filter_col1, filter_col2, filter_col3 = st.columns(3)
+
+        with filter_col1:
+            selected_model_filter = st.selectbox(
+                "Model Filter",
+                ["All"] + list(logs_df["model"].unique())
+            )
+
+        with filter_col2:
+            selected_status_filter = st.selectbox(
+                "Status Filter",
+                ["All"] + list(logs_df["status"].unique())
+            )
+        
+        with filter_col3:
+            search_term = st.text_input(
+                "Search Prediction"
+            )
+
+        filtered_logs = logs_df.copy()
+
+        if selected_model_filter!= "All":
+            filtered_logs = filtered_logs[
+                filtered_logs["model"] == selected_model_filter
+            ]
+        
+        if selected_status_filter!= "All":
+            filtered_logs = filtered_logs[
+                filtered_logs["status"] == selected_status_filter
+            ]
+        
+        if search_term:
+            filtered_logs = filtered_logs[
+                filtered_logs["text"].str.contains(search_term, case = False, na =n)
+            ]
+        
+        #Log Metrics
+        st.markdown("### 📈 Log Metrics")
+
+        metric_col1, metric_col2, metric_col3, metric_col4 = st.columns(4)
+
+        with metric_col1:
+
+            st.metric(
+                "Total Logs",
+                len(filtered_logs)
+            )
+
+        with metric_col2:
+
+            avg_lat = filtered_logs['latency'].mean()
+            st.metric(
+                "Avg Latency",
+                f"{avg_lat:.3f}s" if pd.notna(avg_lat) else "0.000s"
+            )
+
+        with metric_col3:
+
+            error_count = len(
+                filtered_logs[
+                    filtered_logs["status"] != "success"
+                ]
+            )
+
+            st.metric(
+                "Errors",
+                error_count
+            )
+
+        with metric_col4:
+
+            most_used_model = (
+                filtered_logs["model"].mode().iloc[0]
+                if not filtered_logs.empty
+                else "N/A"
+            )
+
+            st.metric(
+                "Most Used Model",
+                most_used_model.upper()
+            )
+
+        # Centerpiece - Main Logs
+        st.markdown("### Inference Logs")
+
+        if filtered_logs.empty:
+            st.warning("No logs match the selected filters.")
+        else:
+            st.dataframe(
+                filtered_logs,
+                width="stretch",
+                height=400
+            )
+
+        # recent failures section
+        failure_logs = filtered_logs[
+            filtered_logs["status"] == "failure"
+        ]
+
+        st.markdown("### Recent Failures")
+        if failure_logs.empty:
+            st.success("No recent failures detected.")
+        else:
+            st.dataframe(
+                failure_logs, width="stretch"
+            )
+
+        #System Events
+        st.markdown("### System Events")
+        system_events = [
+            "Model registry initialized",
+            "Database connection established",
+            "Inference service operational",
+            "Analytics pipeline refreshed"
+        ]
+
+        for event in system_events:
+            st.info(event)
+        
+        st_autorefresh(
+            interval = 5000,
+            key = "logs_refresh"
         )
-
-    #System Events
-    st.markdown("### System Events")
-    system_events = [
-        "Model registry initialized",
-        "Database connection established",
-        "Inference service operational",
-        "Analytics pipeline refreshed"
-    ]
-
-    for event in system_events:
-        st.info(event)
-    
-    st_autorefresh(
-        interval = 5000,
-        key = "logs_refresh"
-    )
