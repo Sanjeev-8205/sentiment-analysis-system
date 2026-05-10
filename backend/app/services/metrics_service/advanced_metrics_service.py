@@ -7,12 +7,10 @@ import pandas as pd
 import numpy as np
 
 def get_p95_latency(db):
-    latencies = [row[0] for row in db.query(Log.latency).all()]
-
-    sorted_latency = sorted(latencies, reverse=False)
-    length_p95 = int(len(sorted_latency)*0.95)
-
-    p95_latency = sorted_latency[length_p95]
+    p95_latency = db.query(
+        func.percentile_cont(0.95)
+        .within_group(Log.latency)
+    ).scalar()
 
     return p95_latency
 
@@ -126,7 +124,7 @@ def get_drift_indicators(db):
         pd.Series(text_length)
         .rolling(window_1, min_periods=1)
         .mean()
-    )
+    ).to_list()
 
     #Sentiment Score rolling window
     sentiments = drift_metrics["predictions"]
@@ -150,6 +148,18 @@ def get_drift_indicators(db):
 
     #Text Length Shift
     shift_window = min(50, len(text_length)//2)
+
+    if shift_window == 0:
+        return {
+            "text_length_rolling": rolling_text_length,
+            "sentiment_score_rolling": rolling_sentiment,
+            "confidence_score_rolling": rolling_confidence,
+            "text_len_shift": 0,
+            "sentiment_shift": 0,
+            "confidence_shift": 0,
+            "timestamp": drift_metrics["timestamp"]
+        }
+    
     recent_text_length = text_length[-shift_window:]
     previous_text_length = text_length[-2*shift_window:-shift_window]
     tx_len_shift = (

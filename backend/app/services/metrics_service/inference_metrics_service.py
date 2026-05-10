@@ -12,7 +12,7 @@ def get_inference_metrics(db):
         func.avg(Log.negative).label("negative_avg"),
         func.avg(Log.neutral).label("neutral_avg"),
         func.avg(Log.positive).label("positive_avg")
-        )
+        ).first()
 
     rpm = db.query(Log).filter(
         Log.timestamp >= one_minute_ago

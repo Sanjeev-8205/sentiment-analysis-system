@@ -15,9 +15,9 @@ def get_sentiment_distribution(db):
 
     total = sum(pred_counts.values())
     return {
-        "Negative": pred_counts["0"],
-        "Neutral": pred_counts["1"],
-        "Positive": pred_counts["2"]
+        "Negative": pred_counts.get("0", 0),
+        "Neutral": pred_counts.get("1", 0),
+        "Positive": pred_counts.get("2", 0)
     }
 
 def get_predictions_over_time(db):
@@ -63,7 +63,7 @@ def get_latency_trends(db):
         func.avg(Log.latency).label("avg_latency"),
         func.max(Log.latency).label("max_latency"),
         func.count(Log.id).label("request_count")
-    ).group_by("hour").order_by("bucket").all()
+    ).group_by("hour").all()
 
     latencies_hour_of_day = []
     for row in latency_per_hour:
@@ -118,6 +118,13 @@ def get_recent_activity_feed(db):
         Log.timestamp,
         Log.latency
     ).order_by(Log.timestamp.desc()).first()
+
+    if not recent_activity:
+        return {
+            "prediction": "No activity",
+            "recent_activity": "No recent activity",
+            "latency": 0
+        }
 
     pred_map = {"0":"Negative", "1":"Neutral", "2":"Positive"}
     predicted_sentiment = pred_map.get(recent_activity[0], "unknown")
