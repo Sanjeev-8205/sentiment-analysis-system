@@ -231,33 +231,41 @@ with tab2:
 
         latency_trends = pd.DataFrame(latency)
 
-        fig_latency_trends = px.line(
-            latency_trends,
-            x = "time",
-            y = "avg_latency",
-            title = "Latency Trends Over Time",
-            markers = True
-        )
+        if not latency_trends.empty:
+            fig_latency_trends = px.line(
+                latency_trends,
+                x = "time",
+                y = "avg_latency",
+                title = "Latency Trends Over Time",
+                markers = True
+            )
 
-        st.plotly_chart(
-            fig_latency_trends, use_container_width=True
-        )
+            st.plotly_chart(
+                fig_latency_trends, use_container_width=True
+            )
+        
+        else:
+            st.info("You have not made any predictions yet. Make predictions to view the results.")
 
         #Confidence distribution
         confidence_ = analytics["confidence_distribution"]
 
         confidence_distribution = pd.DataFrame(confidence_)
 
-        fig_confidence_distributions = px.bar(
-            confidence_distribution,
-            x = "Confidence",
-            y = "Count",
+        if not confidence_distribution.empty:
+            fig_confidence_distributions = px.bar(
+                confidence_distribution,
+                x = "Confidence",
+                y = "Count",
 
-        )
+            )
 
-        st.plotly_chart(
-            fig_confidence_distributions, use_container_width=True
-        )
+            st.plotly_chart(
+                fig_confidence_distributions, width = "stretch"
+            )
+        
+        else:
+            st.info("You have not made any predictions yet. Make predictions to view the results.")
 
         #Recent Activity Feed
         activity_ = analytics["recent_activity"]
