@@ -441,7 +441,14 @@ with tab4:
 
     with right_col:
         st.subheader("Model Availability")
-        st.info(f"{health["models_count"]} ML models are currently loaded and ready for inference.")
+
+        if health["models_count"]==0:
+            model_count_info = f"No ML models are currently loaded."
+        elif health["models_count"]==1:
+            model_count_info = f"{health["models_count"]} ML model is currently loaded and ready for inference."
+        else:
+            model_count_info = f"{health["models_count"]} ML models are currently loaded and ready for inference."
+        st.info(model_count_info)
 
         st.metric(
             "Uptime", f"Uptime = {health["uptime"]}"
