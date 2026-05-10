@@ -371,15 +371,18 @@ with tab3:
         time_stamp = drift_indicators["timestamp"]
 
         ##KPIs
-        st.subheader("Drift Indicators")
-        drift_cols = st.columns(len(shift_data))
+        if shift_data:
+            st.subheader("Drift Indicators")
+            drift_cols = st.columns(len(shift_data))
 
-        for col, (metric, value) in zip(drift_cols, shift_data.items()):
-            with col:
-                st.metric(
-                    metric.replace("_", " ").title(),
-                    f"{value:.2f}"
-                )
+            for col, (metric, value) in zip(drift_cols, shift_data.items()):
+                with col:
+                    st.metric(
+                        metric.replace("_", " ").title(),
+                        f"{value:.2f}"
+                    )
+        else:
+            st.info("Not enough data available to calculate drift shifts yet.")
         
         ##Visualization of rolling drifts
         for metric, value in rolling_data.items():
