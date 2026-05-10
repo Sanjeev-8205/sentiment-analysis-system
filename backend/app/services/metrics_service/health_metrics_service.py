@@ -7,19 +7,16 @@ import psutil
 
 def db_health_check(db):
     try:
-        db.execute(text, "SELECT 1")
+        db.execute(text("SELECT 1"))
 
         return{
             "database": "connected"
         }
     
-    except Exception as e:
+    except Exception:
         return {
             "database": "disconnected"
         }
-
-    finally:
-        db.close()
 
 def loaded_models_count():
     return len(loaded_models.keys())

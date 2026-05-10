@@ -98,8 +98,8 @@ def get_confidence_distribution(db):
 
     bucket_grouping = db.query(
         bucket,
-        func.count(Log).label("count")
-    ).group_by("bucket").all()
+        func.count(Log.id).label("count")
+    ).group_by(bucket).all()
 
     results = []
     for bucket, count in bucket_grouping:
