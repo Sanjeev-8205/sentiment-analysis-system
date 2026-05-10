@@ -24,6 +24,5 @@ def get_inference_metrics(db):
         "negative_avg": round(metrics.negative_avg or 0, 3),
         "neutral_avg": round(metrics.neutral_avg or 0, 3),
         "positive_avg": round(metrics.positive_avg or 0, 3),
-        "currently_selected_model": InputData.model,
         "rpm": rpm
     }
