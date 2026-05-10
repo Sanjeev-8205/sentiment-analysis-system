@@ -48,7 +48,7 @@ with st.sidebar:
 
     user_input = st.text_area("Enter your text", height=200, placeholder="Type review text here......")
     model_choice = st.selectbox("Select Model", model_list)
-    predict_btn = st.button("Predict Sentiment", use_container_width=True)
+    predict_btn = st.button("Predict Sentiment", width="stretch")
 
     st.divider()
 
@@ -181,7 +181,7 @@ with tab2:
         )
 
         st.plotly_chart(
-            fig_sentiment, use_container_width = True
+            fig_sentiment, width="stretch"
         )
 
         #Prediction Over Time
@@ -241,7 +241,7 @@ with tab2:
             )
 
             st.plotly_chart(
-                fig_latency_trends, use_container_width=True
+                fig_latency_trends, width="stretch"
             )
         
         else:
@@ -306,7 +306,7 @@ with tab3:
     st.subheader("Model Performance Comparison")
 
     if not df_metrics.empty:
-        st.dataframe(df_metrics, use_container_width=True)
+        st.dataframe(df_metrics, width="stretch")
     else:
         st.info("You have not made any predictions yet. Make predictions to view the results.")
 
@@ -347,7 +347,7 @@ with tab3:
             )
 
             st.plotly_chart(
-                fig_model_accuracy, use_container_width=True
+                fig_model_accuracy, width="stretch"
             )
 
         else:
@@ -356,45 +356,48 @@ with tab3:
     #Drift indicators
     drift_indicators = advanced["drift_indicators"]
 
-    shift_data = {
-        key:value for key, value in drift_indicators.items() if "shift" in key
-    }
+    if not drift_indicators.empty:
+        shift_data = {
+            key:value for key, value in drift_indicators.items() if "shift" in key
+        }
 
-    rolling_data = {
-        key:value for key, value in drift_indicators.items() if "rolling" in key
-    }
+        rolling_data = {
+            key:value for key, value in drift_indicators.items() if "rolling" in key
+        }
 
-    time_stamp = drift_indicators["timestamp"]
+        time_stamp = drift_indicators["timestamp"]
 
-    ##KPIs
-    st.subheader("Drift Indicators")
-    drift_cols = st.columns(len(shift_data))
+        ##KPIs
+        st.subheader("Drift Indicators")
+        drift_cols = st.columns(len(shift_data))
 
-    for col, (metric, value) in zip(drift_cols, shift_data.items()):
-        with col:
-            st.metric(
-                metric.replace("_", " ").title(),
-                f"{value:.2f}"
+        for col, (metric, value) in zip(drift_cols, shift_data.items()):
+            with col:
+                st.metric(
+                    metric.replace("_", " ").title(),
+                    f"{value:.2f}"
+                )
+        
+        ##Visualization of rolling drifts
+        for metric, value in rolling_data.items():
+            if "text" in metric:
+                title = f"Input Length Trends"
+            elif "sentiment" in metric:
+                title = f"Sentiment Trends"
+            else:
+                title = f"Model Confidence Trends"
+
+            fig_rolling = px.line(
+                x = time_stamp,
+                y = value,
+                title = title
             )
-    
-    ##Visualization of rolling drifts
-    for metric, value in rolling_data.items():
-        if "text" in metric:
-            title = f"Input Length Trends"
-        elif "sentiment" in metric:
-            title = f"Sentiment Trends"
-        else:
-            title = f"Model Confidence Trends"
 
-        fig_rolling = px.line(
-            x = time_stamp,
-            y = value,
-            title = title
-        )
-
-        st.plotly_chart(
-            fig_rolling, use_container_width=True
-        )
+            st.plotly_chart(
+                fig_rolling, width="stretch"
+            )
+    else:
+        st.info("You have not made any predictions yet. Make predictions to view the results.")
 
 with tab4:
     st.subheader("System Health Monitoring")
@@ -460,7 +463,7 @@ with tab4:
 
     st.subheader("Operational Summary")
     st.dataframe(
-        health_table, use_container_width=True
+        health_table, width="stretch"
     )
 
     st.success("All critical services are operational")
@@ -555,7 +558,7 @@ with tab5:
 
     st.dataframe(
         filtered_logs,
-        use_container_width=True,
+        width="stretch",
         height=400
     )
 
@@ -569,7 +572,7 @@ with tab5:
         st.success("No recent failures detected.")
     else:
         st.dataframe(
-            failure_logs, use_container_width=True
+            failure_logs, width="stretch"
         )
 
     #System Events
