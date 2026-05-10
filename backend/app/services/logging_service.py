@@ -1,7 +1,7 @@
 from app.core.database import SessionLocal
 from models.log_models import Log
 
-def log_predictions(text, prediction, prob, model, latency):
+def log_predictions(text, prediction, confidence, prob, model, latency, status):
     db=SessionLocal()
 
     try:
@@ -9,10 +9,12 @@ def log_predictions(text, prediction, prob, model, latency):
             text=text,
             prediction=prediction,
             model=model,
+            confidence=confidence,
             negative=prob[0],
             neutral=prob[1],
             positive=prob[2],
-            latency=latency
+            latency=latency,
+            status=status
         )
 
         db.add(logs)

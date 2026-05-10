@@ -9,6 +9,7 @@ from app.routes.avg_latency import router as latency_router
 from app.routes.system.health import router as health_router
 from app.routes.system.db_status import router as db_status_router
 from app.routes.system.model_status import router as model_status_router
+from app.routes.dashboard import router as dashboard_router
 from app.services.warmup_service import preload_models, warmup
 import threading
 
@@ -39,6 +40,7 @@ app.include_router(latency_router)
 app.include_router(health_router)
 app.include_router(db_status_router)
 app.include_router(model_status_router)
+app.include_router(dashboard_router)
 
 @app.get("/")
 def home():

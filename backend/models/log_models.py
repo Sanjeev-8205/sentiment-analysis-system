@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, Float, DateTime
-from datetime import datetime
+from datetime import datetime, UTC
 from app.core.database import Base
 
 class Log(Base):
@@ -9,8 +9,10 @@ class Log(Base):
     text=Column(String)
     prediction=Column(String)
     model=Column(String)
+    confidence = Column(Float)
     negative=Column(Float)
     neutral=Column(Float)
     positive=Column(Float)
     latency=Column(Float)
-    timestamp=Column(DateTime, default=datetime.now())
+    status=Column(String)
+    timestamp=Column(DateTime, default=datetime.now(UTC))

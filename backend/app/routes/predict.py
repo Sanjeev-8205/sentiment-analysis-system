@@ -8,19 +8,35 @@ router = APIRouter()
 
 @router.post("/predict")
 def predict_route(data: InputData):
+    pred = None
+    prob = None
+    confidence = None
+    status = "failure"
+
     try:
         if not data.text.strip():
-            return HTTPException(status_code=400, detail="Input text cannot be empty.")
+            raise HTTPException(status_code=400, detail="Input text cannot be empty.")
         
         start = time.perf_counter()
         pred, prob = predict(data.text, data.model)
         latency = time.perf_counter() - start
-        log_predictions(data.text, pred, prob, data.model, latency)
+
+        confidence = max(prob)
+
+        status = "success"
+        
+        pred_map = {"0":"Negative", "1":"Neutral", "2":"Positive"}
+        prediction = pred_map.get(pred, 0)
 
         return {
-            "prediction":pred,
+            "prediction":prediction,
             "confidence_scores":prob,
-            "latency":latency
+            "latency":latency,
+            "model_used": data.model
         }
-    except Exception as e:
-        return {"error": str(e)}
+
+    finally:
+        try:
+            log_predictions(data.text, pred, confidence, prob, data.model, latency, status)
+        except Exception as log_error:
+            print(f"Logging Failed : {log_error}")
