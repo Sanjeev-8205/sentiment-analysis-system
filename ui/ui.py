@@ -131,40 +131,45 @@ with tab1:
                 try:
                     result = response.json()
                 
-                    #refresh the dashboards
+                    st.session_state.prediction_result = result
+
+                    #clear old dashboarb cache
                     get_dashboard_metrics.clear()
-                    st.rerun()
-
-                    prediction = result["prediction"]
-                    latency = result["latency"]
-                    confidence_score = max(result["confidence_scores"])
-                    model_name = result["model_used"]
-
-                    st.markdown("## Prediction Result")
-
-                    st.success(
-                        f"Sentiment: {prediction}"
-                    )
-                    
-                    st.progress(confidence_score)
-                    st.write(f"Confidence Score: {confidence_score:.2%}")
-
-                    col1, col2 = st.columns(2)
-
-                    with col1:
-                        st.metric(
-                            "Latency", f"{latency:.3f}"
-                        )
-                    
-                    with col2:
-                        st.metric(
-                            "Model", f"{model_name.upper()}"
-                        )
                 
                 except Exception as e:
                     st.error(
                         f"Prediction failed: {str(e)}"
                     )
+                
+    if "prediction_result" in st.session_state:
+
+        result = st.session_state.prediction_result
+        
+        prediction = result["prediction"]
+        latency = result["latency"]
+        confidence_score = max(result["confidence_scores"])
+        model_name = result["model_used"]
+
+        st.markdown("## Prediction Result")
+
+        st.success(
+            f"Sentiment: {prediction}"
+        )
+        
+        st.progress(confidence_score)
+        st.write(f"Confidence Score: {confidence_score:.2%}")
+
+        col1, col2 = st.columns(2)
+
+        with col1:
+            st.metric(
+                "Latency", f"{latency:.3f}"
+            )
+        
+        with col2:
+            st.metric(
+                "Model", f"{model_name.upper()}"
+            )
 
 with tab2:
     st.subheader("Analytics Dashboard")
