@@ -7,7 +7,7 @@ from streamlit_autorefresh import st_autorefresh
 BASE_URL = "https://sentiment-analysis-system-etlx.onrender.com"
 
 #Get the loaded models
-@st.cache_data(ttl=60)
+@st.cache_data
 def get_models():
     try:
         return requests.get(f"{BASE_URL}/models", timeout=5).json()
@@ -131,6 +131,10 @@ with tab1:
                 try:
                     result = response.json()
                 
+                    #refresh the dashboards
+                    get_dashboard_metrics.clear()
+                    st.rerun()
+
                     prediction = result["prediction"]
                     latency = result["latency"]
                     confidence_score = max(result["confidence_scores"])
