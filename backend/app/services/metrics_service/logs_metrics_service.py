@@ -12,7 +12,7 @@ def get_logs(db):
         Log.latency,
         Log.status,
         Log.timestamp
-    ).order_by(Log.timestamp.desc()).limit(10).all()
+    ).order_by(Log.timestamp.desc()).limit(50).all()
 
     sentiment_map = {
         "0": "Negative",

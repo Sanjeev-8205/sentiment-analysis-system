@@ -20,10 +20,64 @@ model_list = get_models()
 
 @st.cache_data(ttl=15)
 def get_dashboard_metrics():
+
+    empty_dashboard = {
+        "inference": {
+            "total_predictions": 0,
+            "average_latency": 0,
+            "rpm": 0
+        },
+
+        "health": {
+            "db_health": {
+                "database": "disconnected"
+            },
+
+            "models_count": 0,
+
+            "cpu_usage": [0, "Unknown"],
+
+            "uptime": "Unavailable"
+        },
+
+        "analytics": {
+            "sentiment_distribution": {},
+            "predictions_over_time": [],
+            "model_usage_distribution": [],
+            "latency_trends": [None, []],
+            "confidence_distribution": [],
+            "recent_activity": {}
+        },
+
+        "advanced": {
+            "failure_rate": {
+                "failure_percent": 0
+            },
+
+            "p95_latency": 0,
+
+            "model_metrics": {},
+
+            "latency_per_model": [],
+
+            "drift_indicators": {}
+        },
+
+        "logs": []
+    }
+
     try:
-        return requests.get(f"{BASE_URL}/dashboard", timeout=10).json()
-    except Exception as e:
-        return ["Backend not available!"]
+        response = requests.get(
+            f"{BASE_URL}/dashboard",
+            timeout=10
+        )
+
+        response.raise_for_status()
+
+        return response.json()
+
+    except Exception:
+        return empty_dashboard
 
 if "dashboard_metrics" not in st.session_state:
     st.session_state.dashboard_metrics = get_dashboard_metrics()
@@ -103,15 +157,17 @@ col5.metric(
 )
 
 #Tab System
-tab1, tab2, tab3, tab4, tab5 = st.tabs([
-    "Prediction",
-    "Analytics",
-    "Advanced Metrics",
-    "System Health",
-    "Logs"
+page = st.sidebar.radio(
+    "Navigation",
+    [
+        "Prediction",
+        "Analytics",
+        "Advanced Metrics",
+        "System Health",
+        "Logs"
 ])
 
-with tab1:
+if page=="Prediction":
     st.subheader("✨ AI Sentiment System")
     st.caption("Live inference using production ML models")
 
@@ -170,7 +226,7 @@ with tab1:
                 "Model", f"{model_name.upper()}"
             )
 
-with tab2:
+if page == "Analytics":
     st.subheader("Analytics Dashboard")
     st.caption(
         "Historical inference trends and system intelligence"
@@ -292,7 +348,7 @@ with tab2:
             activity_feed, width = "stretch"
         )
 
-with tab3:
+if page == "Advanced Metrics":
     st.header("Advanced ML Metrics")
     st.caption("Production-grade performance and observability insights")
 
@@ -418,7 +474,7 @@ with tab3:
                 fig_rolling, width="stretch"
             )
 
-with tab4:
+if page == "System Health":
     st.subheader("System Health Monitoring")
     st.caption("Infrastructure status and operational monitoring")
 
@@ -495,7 +551,7 @@ with tab4:
 
     st.success("All critical services are operational.")
 
-with tab5:
+if page == "Logs":
     logs_df = pd.DataFrame(dashboard_metrics["logs"])
 
     if logs_df.empty:
@@ -506,7 +562,7 @@ with tab5:
             st.markdown("### Filters")
         with col2:
             refresh_col1, refresh_col2 = st.columns(2)
-            
+
             with refresh_col1:
                 if st.button("🔄 Refresh"):
                     get_dashboard_metrics.clear()
@@ -561,9 +617,10 @@ with tab5:
 
         with metric_col1:
 
+            st.metric
             st.metric(
                 "Total Logs",
-                len(filtered_logs)
+                dashboard_metrics["inference"]["total_predictions"]
             )
 
         with metric_col2:
