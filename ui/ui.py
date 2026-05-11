@@ -17,7 +17,15 @@ def get_models():
 model_list = get_models()
 
 #dashboard_metrics
-dashboard_metrics = requests.get(f"{BASE_URL}/dashboard").json()
+
+@st.cache_data(ttl=15)
+def get_dashboard_metrics():
+    try:
+        return requests.get(f"{BASE_URL}/dashboard", timeout=10).json()
+    except Exception as e:
+        return ["Backend not available!"]
+
+dashboard_metrics = get_dashboard_metrics()
 
 inference = dashboard_metrics["inference"]
 health = dashboard_metrics["health"]
@@ -476,7 +484,7 @@ with tab4:
         health_table, width="stretch"
     )
 
-    st.success("All critical services are operational")
+    st.success("All critical services are operational.")
 
 with tab5:
     logs_df = pd.DataFrame(logs_data)
