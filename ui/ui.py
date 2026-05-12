@@ -751,7 +751,7 @@ if page=="Batch Jobs":
                         st.warning("Invalid JSON response")
                         st.stop()
                 else:
-                    st.error(f"API Error: ",response.status_code)
+                    st.error(f"API Error: {response.status_code}")
                     st.text(response.text)
                     st.stop()
 
