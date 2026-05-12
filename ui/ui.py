@@ -761,8 +761,9 @@ if page=="Batch Jobs":
                     status_text.write(f"Status: {job_data['status']}")
                     progress_bar.progress(job_data['progress'] / 100)
                     row_text.write(
-                        f"Processsed rows: {job_data['processed_rows']}",
-                        f"Total rows: {job_data['total_rows']}"
+                        f"Processsed rows: "
+                        f"{job_data['processed_rows']} / "
+                        f"{job_data['total_rows']}"
                     )
 
                 if job_data["status"] in ["completed", "failed"]:
