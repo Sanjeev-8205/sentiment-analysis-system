@@ -705,11 +705,11 @@ if page=="Batch Jobs":
     selected_model = st.selectbox("Choose Model", model_list)
     upload_button = st.button("Start Batch Predictions")
 
-    if "polling_started" in st.session_state:
+    if "polling_started" not in st.session_state:
         st.session_state.polling_started = False
 
-    if uploaded_file is not None and not st.session.polling_started:
-        if upload_button:
+    if upload_button:
+        if uploaded_file is not None and not st.session_state.get("polling_started", False):
             files = {
                 "file":uploaded_file.getvalue()
             }
@@ -733,10 +733,10 @@ if page=="Batch Jobs":
             job_id = response.json()['job_id']
 
             st.session_state.job_id = job_id
-            st.session.polling_started = True
+            st.session_state.polling_started = True
             time.sleep(1)
 
-        if "job_id" in st.session_state and st.session_state.polling_started:
+        if "job_id" in st.session_state and st.session_state.get("polling_started", True):
             job_id = st.session_state.job_id
 
             placeholder = st.empty()
@@ -766,7 +766,7 @@ if page=="Batch Jobs":
                     status_text.write(f"Status: {job_data['status']}")
                     progress_bar.progress(job_data['progress'] / 100)
                     row_text.write(
-                        f"Processsed rows: "
+                        f"Processed rows: "
                         f"{job_data['processed_rows']} / "
                         f"{job_data['total_rows']}"
                     )
@@ -779,7 +779,7 @@ if page=="Batch Jobs":
                         st.success("Batch job completed!")
                     
                     else:
-                        st.error("Batch job falied!")
+                        st.error("Batch job failed!")
 
                     break                
 
