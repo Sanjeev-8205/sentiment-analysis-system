@@ -164,7 +164,8 @@ page = st.sidebar.radio(
         "Analytics",
         "Advanced Metrics",
         "System Health",
-        "Logs"
+        "Logs",
+        "Batch Jobs"
 ])
 
 if page=="Prediction":
@@ -693,3 +694,67 @@ if page == "Logs":
 
         for event in system_events:
             st.info(event)
+
+if page=="Batch Jobs":
+    st.markdown("## Batch Jobs")
+
+    uploaded_file = st.file_uploader(
+        "Upload CSV", type=["csv"]
+    )
+
+    selected_model = st.selectbox("Choose Model", model_list)
+    upload_button = st.button("Batch Predict")
+
+    if upload_button:
+        files = {
+            "file":uploaded_file.getvalue()
+        }
+
+        data = {
+            "model": selected_model
+        }
+
+    response = requests.post(
+        f"{BASE_URL}/batch/job",
+        params={"model": selected_model},
+        files={
+            "file":(
+                uploaded_file.name,
+                uploaded_file.getvalue(),
+                "text/csv"
+            )
+        }
+    )
+
+    job_id = response.json()['job_id']
+
+    st.session_state.job_id = job_id
+
+    if "job_id" in st.session_state:
+        job_id = st.session_state.job_id
+
+        placeholder = st.empty()
+        progress_bar = st.progress(0)
+        status_text = st.empty()
+        row_text = st.empty()
+
+        while True:
+
+            response = requests.get(
+                f"{BASE_URL}/batch/job/{job_id}"
+            )
+
+            job_data = response.json()
+
+            with placeholder.container():
+                status_text.write(f"Status: {job_data['status']}")
+                progress_bar.write(job_data['progress'] / 100)
+                row_text.write(
+                    f"Processsed rows: {job_data['processed_rows']}",
+                    f"Total rows: {job_data['total_rows']}"
+                )
+
+            if job_data["status"] in ["completed", "failed"]:
+                break
+
+            

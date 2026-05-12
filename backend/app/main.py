@@ -11,6 +11,7 @@ import threading
 
 from app.core.database import Base, engine
 from models.log_models import Log
+from models.batch_job_model import BatchJob
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
