@@ -68,7 +68,8 @@ def process_batch_job(job_id: int, file_path: str):
                 ((index+1)/total_rows)*100, 2
             )
 
-            db.commit()
+            if (index+1) % 10 == 0:
+                db.commit()
 
         end_time = time.perf_counter()
 
