@@ -3,6 +3,7 @@ import requests
 import plotly.express as px
 import pandas as pd
 from streamlit_autorefresh import st_autorefresh
+import time
 
 BASE_URL = "https://sentiment-analysis-system-etlx.onrender.com"
 
@@ -740,34 +741,37 @@ if page=="Batch Jobs":
 
             while True:
 
-                response = requests.get(
-                    f"{BASE_URL}/batch/job/{job_id}", timeout=10
-                )
+                try:
+                    response = requests.get(
+                        f"{BASE_URL}/batch/job/{job_id}", timeout=10
+                    )
 
-                if response.status_code == 200:
-                    try:
-                        job_data = response.json()
-                    except Exception:
-                        st.warning("Invalid JSON response")
-                        st.stop()
-                else:
-                    st.error(f"API Error: {response.status_code}")
-                    st.text(response.text)
-                    st.stop()
+                    if response.status_code != 200:
+                        st.error(f"API Error: {response.status_code}")
+                        st.text(response.text)
+                        break
 
-                st.write("Status code:", response.status_code)
-                st.write("Raw response:", response.text)
+                    job_data = response.json()
 
+                except Exception as e:
+                    st.error(f"Request Failed: {e}")
+                    break
 
                 with placeholder.container():
                     status_text.write(f"Status: {job_data['status']}")
-                    progress_bar.write(job_data['progress'] / 100)
+                    progress_bar.progress(job_data['progress'] / 100)
                     row_text.write(
                         f"Processsed rows: {job_data['processed_rows']}",
                         f"Total rows: {job_data['total_rows']}"
                     )
 
                 if job_data["status"] in ["completed", "failed"]:
-                    break
+                    if job_data["status"] == "completed":
+                        st.success("Batch job completed!")
+                    
+                    else:
+                        st.error("Batch job falied!")
 
-                
+                    break                
+
+                time.sleep(1)

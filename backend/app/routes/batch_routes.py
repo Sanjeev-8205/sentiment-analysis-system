@@ -86,10 +86,10 @@ async def get_batch_job(job_id: int):
     db = SessionLocal()
 
     try:
-        job = db.query(BatchJob).filter(BatchJob.id == job_id).all()
+        job = db.query(BatchJob).filter(BatchJob.id == job_id).first()
 
         if not job:
-            raise HTTPException(status_code=404, details = "Job Not Found")
+            raise HTTPException(status_code=404, detail = "Job Not Found")
         
         return {
             "job_id": job.id,
@@ -114,7 +114,7 @@ async def get_batch_job_results(job_id: int):
 
     try:
         results = (
-            db.query(BatchResult).filter(BatchResult.job_id == job_id).all()
+            db.query(BatchResult).filter(BatchResult.job_id == job_id).first()
         )
     
         formatted_results = []
