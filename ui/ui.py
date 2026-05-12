@@ -741,10 +741,23 @@ if page=="Batch Jobs":
             while True:
 
                 response = requests.get(
-                    f"{BASE_URL}/batch/job/{job_id}"
+                    f"{BASE_URL}/batch/job/{job_id}", timeout=10
                 )
 
-                job_data = response.json()
+                if response.status_code == 200:
+                    try:
+                        job_data = response.json()
+                    except Exception:
+                        st.warning("Invalid JSON response")
+                        st.stop()
+                else:
+                    st.error(f"API Error: ",response.status_code)
+                    st.text(response.text)
+                    st.stop()
+
+                st.write("Status code:", response.status_code)
+                st.write("Raw response:", response.text)
+
 
                 with placeholder.container():
                     status_text.write(f"Status: {job_data['status']}")
