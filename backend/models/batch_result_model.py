@@ -1,5 +1,6 @@
 from sqlalchemy import Column, Integer, String, Float, ForeignKey
 from app.core.database import Base
+from models.batch_job_model import BatchJob
 
 class BatchResult(Base):
     __tablename__ = "batch_results"

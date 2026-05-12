@@ -3,7 +3,7 @@ from app.core.database import Base
 from datetime import datetime, UTC
 
 class BatchJob(Base):
-    __tablename__ = "batch_logs"
+    __tablename__ = "batch_jobs"
 
     id = Column(Integer, primary_key=True, index = True)
     filename = Column(String, nullable=False)

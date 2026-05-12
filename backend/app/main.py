@@ -13,6 +13,7 @@ import threading
 from app.core.database import Base, engine
 from models.log_models import Log
 from models.batch_job_model import BatchJob
+from models.batch_result_model import BatchResult
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -35,7 +36,7 @@ app.include_router(health_router)
 app.include_router(db_status_router)
 app.include_router(model_status_router)
 app.include_router(dashboard_router)
-app.include(batch_router)
+app.include_router(batch_router)
 
 @app.get("/")
 def home():
