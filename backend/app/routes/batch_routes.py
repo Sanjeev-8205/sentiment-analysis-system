@@ -1,11 +1,10 @@
-from fastapi import APIRouter, UploadFile, File, BackgroundTasks, HTTPException
+from fastapi import APIRouter, UploadFile, File, BackgroundTasks, HTTPException, Depends
 from models.batch_job_model import BatchJob
 from models.batch_result_model import BatchResult
 from sqlalchemy.orm import Session
 from app.core.database import SessionLocal
 from app.services.batch_service import process_batch_job
 import pandas as pd
-import os
 from pathlib import Path
 import uuid
 
@@ -24,10 +23,11 @@ def get_db():
 async def upload_batch_file(
     background_tasks: BackgroundTasks,
     model: str,
-    file: UploadFile = File(...)
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db)
 ):
     #Validate CSV
-    if not file.filename.endswith(".csv"):
+    if not file.filename.lower().endswith(".csv"):
         raise HTTPException(status_code=400, detail="Only CSV files are allowed.")
 
     up_path = Path(__file__).resolve().parent.parent
@@ -50,8 +50,6 @@ async def upload_batch_file(
     #check required columns
     if "text" not in df.columns:
         raise HTTPException(status_code=400, detail="CSV must contain 'text' column.")
-    
-    db = SessionLocal()
 
     # Create job
     job = BatchJob(
@@ -73,8 +71,6 @@ async def upload_batch_file(
         upload_path
     )
 
-    db.close()
-
     return {
         "message": "Batch job created",
         "job_id": job.id,
@@ -87,7 +83,7 @@ async def get_batch_job(job_id: int):
     db = SessionLocal()
 
     try:
-        job = db.query(BatchJob).filter(BatchJob.id == job_id).first()
+        job = db.query(BatchJob).filter(BatchJob.id == job_id).all()
 
         if not job:
             raise HTTPException(status_code=404, detail = "Job Not Found")
@@ -99,6 +95,8 @@ async def get_batch_job(job_id: int):
             "model_name": job.model_name,
             "total_rows": job.total_rows,
             "processed_rows": job.processed_rows,
+            "inference_time": job.inference,
+            "throughput": job.throughput,
             "progress": job.progress,
             "processing_time": job.processing_time,
             "created_at": job.created_at,
@@ -115,7 +113,7 @@ async def get_batch_job_results(job_id: int):
 
     try:
         results = (
-            db.query(BatchResult).filter(BatchResult.job_id == job_id).first()
+            db.query(BatchResult).filter(BatchResult.job_id == job_id).all()
         )
     
         formatted_results = []
