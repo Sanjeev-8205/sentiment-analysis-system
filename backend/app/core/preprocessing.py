@@ -5,9 +5,9 @@ nlp=spacy.load("en_core_web_sm", disable=["parser", "ner"])
 def textProcess_lr(text):
     text = text.lower()
     text = re.sub('[^a-z0-9\s]+', "", text)
-    text = re.sub("\s+", " ", text)
-    
-    return text
+    text = re.sub("\s+", " ", text).split()
+
+    return [" ".join(text)]
 
 def preprocess_batch_lr(texts):
     processed = []
