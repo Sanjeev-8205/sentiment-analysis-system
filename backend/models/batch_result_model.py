@@ -19,5 +19,3 @@ class BatchResult(Base):
     confidence = Column(Float)
 
     model_used = Column(String)
-
-    latency = Column(Float)

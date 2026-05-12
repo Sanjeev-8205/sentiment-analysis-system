@@ -14,6 +14,9 @@ class BatchJob(Base):
     total_rows = Column(Integer, default=0)
     processed_rows = Column(Integer, default=0)
 
+    inference_time = Column(Float, default = 0.0)
+    throughput = Column(Float, default = 0.0)
+
     progress = Column(Float, default=0.0)
     processing_time = Column(Float, default=0.0)
 

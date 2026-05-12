@@ -68,6 +68,7 @@ async def upload_batch_file(
     db.refresh(job)
     background_tasks.add_task(
         process_batch_job,
+        model,
         job.id,
         upload_path
     )

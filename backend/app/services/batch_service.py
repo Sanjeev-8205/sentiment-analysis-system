@@ -13,7 +13,7 @@ def process_batch_job(job_id: int, file_path: str, model:str):
     db = SessionLocal()
 
     try:
-        job = db.query(BatchJob).filter(BatchJob.id == job_id).first()
+        job = db.query(BatchJob).filter(BatchJob.id == job_id).all()
 
         if not job:
             return
@@ -31,7 +31,10 @@ def process_batch_job(job_id: int, file_path: str, model:str):
 
         start = time.perf_counter()
         preds, probs = predict_batch(df["text"], model)
-        latency = time.perf_counter() - start
+        inference_time = time.perf_counter() - start
+
+        job.inference_time = inference_time
+        job.throughput = total_rows/inference_time
 
         BUFFER = 20
         results_buffer=[]
@@ -41,8 +44,7 @@ def process_batch_job(job_id: int, file_path: str, model:str):
                 "text": text,
                 "prediction": pred,
                 "confidence": float(max(prob)),
-                "model_used": job.model_name,
-                "latency": round(latency, 4)
+                "model_used": job.model_name
             })
 
             
@@ -70,6 +72,8 @@ def process_batch_job(job_id: int, file_path: str, model:str):
 
         job.processing_time = round(end_time - start_time, 4)
         job.completed_at = datetime.now(UTC)
+        job.processed_rows = total_rows
+        job.progress = 100
 
         db.commit()
 
