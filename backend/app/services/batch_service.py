@@ -37,6 +37,7 @@ def process_batch_job(job_id: int, file_path: str, model:str):
         job.throughput = total_rows/inference_time
 
         BUFFER = 20
+        db_time = 0
         results_buffer=[]
         for index, (text, pred, prob) in enumerate(zip(df["text"], preds, probs)):
             results_buffer.append({
@@ -55,25 +56,32 @@ def process_batch_job(job_id: int, file_path: str, model:str):
                 )
 
                 if len(results_buffer) >= BUFFER:
+                    st_time = time.perf_counter()
                     stmt = insert(BatchResult).values(results_buffer)
                     db.execute(stmt)
                     db.commit()
+                    db_time += time.perf_counter() - st_time
 
                     results_buffer.clear()
 
         if results_buffer:
+            st_time = time.perf_counter()
             stmt = insert(BatchResult).values(results_buffer)
             db.execute(stmt)
             db.commit()
+            db_time += time.perf_counter() - st_time
 
         end_time = time.perf_counter()
 
         job.status = "completed"
 
-        job.processing_time = round(end_time - start_time, 4)
+        proc_time = end_time - start_time
+        job.processing_time = round(proc_time, 4)
         job.completed_at = datetime.now(UTC)
         job.processed_rows = total_rows
         job.progress = 100
+        job.db_time = round(db_time, 4)
+        job.overhead_time = round(proc_time - db_time - inference_time, 4)
 
         db.commit()
 
