@@ -13,7 +13,7 @@ def process_batch_job(job_id: int, file_path: str, model:str):
     db = SessionLocal()
 
     try:
-        job = db.query(BatchJob).filter(BatchJob.id == job_id).all()
+        job = db.query(BatchJob).filter(BatchJob.id == job_id).first()
 
         if not job:
             return
