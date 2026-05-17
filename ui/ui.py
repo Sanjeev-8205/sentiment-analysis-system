@@ -777,6 +777,40 @@ if page=="Batch Jobs":
 
                     if job_data["status"] == "completed":
                         st.success("Batch job completed!")
+
+                        st.divider()
+                        st.subheader("AI Insights")
+
+                        summary_type = st.radio(
+                            "Summary Type",
+                            [
+                                "Executive Summary",
+                                "Detailed Report",
+                                "Full Report(Both)"
+                            ],
+                            index=2,
+                            help = "Executive: 30 seconds read | Detailed: Full Breakdown | Full: Both"
+                        )
+
+                        if st.button("Generate AI Insights"):
+                            with st.spinner("Analyzing reviews with AI..."):
+                                response = requests.get(
+                                    f"{BASE_URL}/batch/job/{job_id}/summary",
+                                    params={"summary_type":summary_type},
+                                    timeout=120
+                                )
+
+                                if response.status_code == 200:
+                                    data = response.json()
+
+                                    st.caption(
+                                        f"{'Cached' if data["Cached"] else 'Generated'} by {data["provider"]} • {data["summary_type"]}"
+                                    )
+
+                                    st.markdown(data["Summary"])
+
+                                else:
+                                    st.error("Failed to generate insights. Try again.")
                     
                     else:
                         st.error("Batch job failed!")
