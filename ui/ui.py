@@ -807,7 +807,7 @@ if page=="Batch Jobs":
                                         f"{'Cached' if data["cached"] else 'Generated'} by {data["provider"]} • {data["summary_type"]}"
                                     )
 
-                                    st.markdown(data["Summary"])
+                                    st.markdown(data["summary"])
 
                                 else:
                                     st.error("Failed to generate insights. Try again.")
