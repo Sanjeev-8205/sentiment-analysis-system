@@ -790,38 +790,38 @@ if page=="Batch Jobs":
 
                 time.sleep(1)              
             
-            if st.session_state.completed_job_data:
-                st.divider()
-                st.subheader("AI Insights")
+    if st.session_state.completed_job_data:
+        st.divider()
+        st.subheader("AI Insights")
 
-                summary_type = st.radio(
-                    "Summary Type",
-                    [
-                        "Executive Summary",
-                        "Detailed Report",
-                        "Full Report(Both)"
-                    ],
-                    horizontal=True,
-                    help = "Executive: 30 seconds read | Detailed: Full Breakdown | Full: Both"
+        summary_type = st.radio(
+            "Summary Type",
+            [
+                "Executive Summary",
+                "Detailed Report",
+                "Full Report(Both)"
+            ],
+            horizontal=True,
+            help = "Executive: 30 seconds read | Detailed: Full Breakdown | Full: Both"
+        )
+
+        if st.button("Generate AI Insights"):
+            with st.spinner("Analyzing reviews with AI..."):
+                response = requests.get(
+                    f"{BASE_URL}/batch/job/{job_id}/summary",
+                    params={"summary_type":summary_type},
+                    timeout=120
                 )
 
-                if st.button("Generate AI Insights"):
-                    with st.spinner("Analyzing reviews with AI..."):
-                        response = requests.get(
-                            f"{BASE_URL}/batch/job/{job_id}/summary",
-                            params={"summary_type":summary_type},
-                            timeout=120
-                        )
+                if response.status_code == 200:
+                    data = response.json()
 
-                        if response.status_code == 200:
-                            data = response.json()
+                    st.caption("AI Summary ")
 
-                            st.caption("AI Summary ")
+                    st.markdown(data["summary"])
 
-                            st.markdown(data["summary"])
+                else:
+                    st.error("Failed to generate insights. Try again.")
 
-                        else:
-                            st.error("Failed to generate insights. Try again.")
-        
-            elif st.session_state.failed_job:
-                st.error("Batch job failed!")
+    elif st.session_state.failed_job:
+        st.error("Batch job failed!")
