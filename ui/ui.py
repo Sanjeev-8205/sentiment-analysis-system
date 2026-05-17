@@ -708,6 +708,12 @@ if page=="Batch Jobs":
     if "polling_started" not in st.session_state:
         st.session_state.polling_started = False
 
+    if "completed_job_data" not in st.session_state:
+        st.session_state.completed_job_data = None
+
+    if "failed_job" not in st.session_state:
+        st.session_state.failed_job = False
+
     if upload_button:
         if uploaded_file is not None and not st.session_state.get("polling_started", False):
             files = {
@@ -776,45 +782,46 @@ if page=="Batch Jobs":
                     st.session_state.polling_started = False
 
                     if job_data["status"] == "completed":
-                        st.success("Batch job completed!")
+                        st.session_state.completed_job_data = job_data
+                    else:
+                        st.session_state.failed_job = True
 
-                        st.divider()
-                        st.subheader("AI Insights")
+                    break  
 
-                        summary_type = st.radio(
-                            "Summary Type",
-                            [
-                                "Executive Summary",
-                                "Detailed Report",
-                                "Full Report(Both)"
-                            ],
-                            index=2,
-                            help = "Executive: 30 seconds read | Detailed: Full Breakdown | Full: Both"
+                time.sleep(1)              
+            
+            if st.session_state.completed_job_data:
+                st.divider()
+                st.subheader("AI Insights")
+
+                summary_type = st.radio(
+                    "Summary Type",
+                    [
+                        "Executive Summary",
+                        "Detailed Report",
+                        "Full Report(Both)"
+                    ],
+                    horizontal=True,
+                    help = "Executive: 30 seconds read | Detailed: Full Breakdown | Full: Both"
+                )
+
+                if st.button("Generate AI Insights"):
+                    with st.spinner("Analyzing reviews with AI..."):
+                        response = requests.get(
+                            f"{BASE_URL}/batch/job/{job_id}/summary",
+                            params={"summary_type":summary_type},
+                            timeout=120
                         )
 
-                        if st.button("Generate AI Insights"):
-                            with st.spinner("Analyzing reviews with AI..."):
-                                response = requests.get(
-                                    f"{BASE_URL}/batch/job/{job_id}/summary",
-                                    params={"summary_type":summary_type},
-                                    timeout=120
-                                )
+                        if response.status_code == 200:
+                            data = response.json()
 
-                                if response.status_code == 200:
-                                    data = response.json()
+                            st.caption("AI Summary ")
 
-                                    st.caption(
-                                        f"{'Cached' if data["cached"] else 'Generated'} by {data["provider"]} • {data["summary_type"]}"
-                                    )
+                            st.markdown(data["summary"])
 
-                                    st.markdown(data["summary"])
-
-                                else:
-                                    st.error("Failed to generate insights. Try again.")
-                    
-                    else:
-                        st.error("Batch job failed!")
-
-                    break                
-
-                time.sleep(1)
+                        else:
+                            st.error("Failed to generate insights. Try again.")
+        
+            elif st.session_state.failed_job:
+                st.error("Batch job failed!")
