@@ -804,7 +804,7 @@ if page=="Batch Jobs":
                                     data = response.json()
 
                                     st.caption(
-                                        f"{'Cached' if data["Cached"] else 'Generated'} by {data["provider"]} • {data["summary_type"]}"
+                                        f"{'Cached' if data["cached"] else 'Generated'} by {data["provider"]} • {data["summary_type"]}"
                                     )
 
                                     st.markdown(data["Summary"])
