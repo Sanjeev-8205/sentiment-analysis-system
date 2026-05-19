@@ -779,11 +779,11 @@ def render_observability():
 
         with right_col:
             if dashboard_metrics["health"]["models_count"]==0:
-                model_count_info = f"No ML models are currently loaded."
+                model_count_info = f"No Active Models."
             elif dashboard_metrics["health"]["models_count"]==1:
-                model_count_info = f"{dashboard_metrics["health"]["models_count"]} ML model is currently loaded and ready for inference."
+                model_count_info = f"{dashboard_metrics["health"]["models_count"]} Active Model."
             else:
-                model_count_info = f"{dashboard_metrics["health"]["models_count"]} ML models are currently loaded and ready for inference."
+                model_count_info = f"{dashboard_metrics["health"]["models_count"]} Active Models."
             mini_card("Model Avalilability", model_count_info)
 
         l_col, r_col = st.columns(2)

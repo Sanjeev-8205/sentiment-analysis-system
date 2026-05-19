@@ -161,8 +161,8 @@ def mini_card(title, value):
             {title}
         </div>
         <div style="
-            font-size: 1.8rem;
-            font-weight: 700;
+            font-size: 1.2rem;
+            font-weight: 600;
             color: #F3F4F6;
         ">
             {value}
