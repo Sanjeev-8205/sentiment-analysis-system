@@ -25,27 +25,23 @@ def load_global_styles():
         border-right: 1px solid rgba(255,255,255,0.06);
     }
 
-    /* Metric Cards */
-    .metric-card {
-        background: rgba(17,24,39,0.88);
-        border: 1px solid rgba(255,255,255,0.06);
-        border-radius: 18px;
-        padding: 1.4rem;
-        margin-bottom: 1rem;
-
-        box-shadow:
-            0 4px 20px rgba(0,0,0,0.25);
-
-        backdrop-filter: blur(12px);
-
-        transition: 0.2s ease;
+    /* Metrics Card */
+    div[data-testid="stMarkdownContainer"] .metric-card {
+        background: rgba(17,24,39,0.88) !important;
+        border: 1px solid rgba(255,255,255,0.06) !important;
+        border-radius: 18px !important;
+        padding: 1.4rem !important;
+        margin-bottom: 1rem !important;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.25) !important;
+        backdrop-filter: blur(12px) !important;
+        transition: 0.2s ease !important;
     }
 
-    /* Card Hover */
-    .metric-card:hover {
-        border: 1px solid rgba(99,102,241,0.45);
-        transform: translateY(-2px);
-    }
+    /* Metrics Card Hover */
+    div[data-testid="stMarkdownContainer"] .metric-card:hover {
+        border: 1px solid rgba(99,102,241,0.45) !important;
+        transform: translateY(-2px) !important;
+    }           
 
     /* Section Headers */
     .section-header {

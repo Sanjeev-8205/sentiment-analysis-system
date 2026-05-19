@@ -1,6 +1,7 @@
 import streamlit as st
 
 def metric_card(title, value, delta=None):
+
     st.markdown(f"""
     <div class="metric-card">
                 
@@ -93,27 +94,29 @@ def subtitle_subtext(text):
 
 def chart_container(fig, title, subtitle=None):
 
-    with st.container():
+    with st.container(border=True):
 
         st.markdown(f"""
-        <div class="metric-card">
-            <div style="
-                font-size:1.1rem;
-                font-weight:700;
-                margin-bottom:0.3rem;
-            ">
-                {title}
-            </div>
+        <div style="
+            font-size:1.1rem;
+            font-weight:700;
+            margin-bottom:0.3rem;
+        ">
+            {title}
+        </div>
+        """, unsafe_allow_html=True)
 
+        if subtitle:
+
+            st.markdown(f"""
             <div style="
                 color:#9CA3AF;
                 font-size:0.92rem;
                 margin-bottom:1rem;
             ">
-                {subtitle if subtitle else ""}
+                {subtitle}
             </div>
-        </div>
-        """, unsafe_allow_html=True)
+            """, unsafe_allow_html=True)
 
         st.plotly_chart(
             fig,
