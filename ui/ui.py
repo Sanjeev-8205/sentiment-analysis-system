@@ -376,7 +376,7 @@ def render_ai_intelligence():
             summary_container = st.empty()
             with summary_container.container(height=500):
                 st.caption("AI Summary")
-                with st.expander("View AI Summary", expanded=True, help="Click to expand or hide the summary."):
+                with st.expander("View AI Summary", expanded=True):
                     st.markdown(st.session_state.ai_summary)
 
     if not st.session_state.completed_job_data:
