@@ -1,6 +1,8 @@
 import streamlit as st
 
 def metric_card(title, value, delta=None):
+    delta_html = f'<p style="color:#10B981; margin:4px 0 0 0;">{delta}</p>' if delta else ""
+
     st.markdown(f"""
     <div style="
         background: rgba(17,24,39,0.88);
@@ -16,9 +18,7 @@ def metric_card(title, value, delta=None):
         <h2 style="margin:0; color:#F9FAFB;">
             {value}
         </h2>
-        <p style="color:#10B981; margin:4px 0 0 0;">
-            {delta if delta else ""}
-        </p>
+        {delta_html}
     </div>
     """, unsafe_allow_html=True)
 
