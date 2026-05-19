@@ -144,17 +144,28 @@ def chart_container(fig, title, subtitle=None):
         )
 
 def mini_card(title, value):
-
     st.markdown(f"""
-    <div class="mini-card">
-
-        <div class="mini-card-title">
+    <div style="
+        background: rgba(17,24,39,0.65);
+        border: 1px solid rgba(255,255,255,0.05);
+        border-radius: 14px;
+        padding: 1rem;
+        margin-top: 0.5rem;
+        margin-bottom: 0.5rem;
+    ">
+        <div style="
+            color: #9CA3AF;
+            font-size: 0.9rem;
+            margin-bottom: 0.35rem;
+        ">
             {title}
         </div>
-
-        <div class="mini-card-value">
+        <div style="
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #F3F4F6;
+        ">
             {value}
         </div>
-
     </div>
     """, unsafe_allow_html=True)
