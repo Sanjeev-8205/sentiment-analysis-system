@@ -751,21 +751,15 @@ def render_observability():
 
         db_status = dashboard_metrics["health"]["db_health"]["database"]
 
-        c1, c2, c3 = st.columns(3)
+        c1, c2 = st.columns(2)
         
         with c1:
-            if db_status == "connected":
-                status_card("Database", "Connected", "green")
-            else:
-                status_card("Database", "Disconnected", "red")
-        
-        with c2:
             metric_card(
                 "Model Count",
                 dashboard_metrics["health"]["models_count"]
             )
         
-        with c3:
+        with c2:
             metric_card(
                 "CPU Usage",
                 f"{dashboard_metrics["health"]["cpu_usage"][0]:.2f}%"
@@ -774,18 +768,17 @@ def render_observability():
         #columns for infra+CPU and Model+Uptime
         left_col, right_col = st.columns(2)
         with left_col:
-            st.subheader("Infrastructure Status")
+            st.subheader("Infrastructure Health")
             if db_status == "connected":
                 status_card("Database", "Connected", "green")
             else:
                 status_card("Database", "Connection issue", "red")
 
-            st.subheader("Resource Monitoring")
             st.write("CPU Utilization")
             st.progress(dashboard_metrics["health"]["cpu_usage"][0] / 100)
 
         with right_col:
-            st.subheader("Model Availability")
+            st.subheader("Model Operations")
 
             if dashboard_metrics["health"]["models_count"]==0:
                 model_count_info = f"No ML models are currently loaded."
@@ -795,7 +788,6 @@ def render_observability():
                 model_count_info = f"{dashboard_metrics["health"]["models_count"]} ML models are currently loaded and ready for inference."
             st.info(model_count_info)
 
-            st.subheader("Uptime")
             metric_card(
                 "Uptime", f"{dashboard_metrics["health"]["uptime"]}"
             )
