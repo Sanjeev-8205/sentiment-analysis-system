@@ -44,7 +44,7 @@ def load_global_styles():
     }           
                 
     /* Mini Card */
-    div[data-testid="stMarkdownContainer"] .mini-card {
+    .mini-card {
         background: rgba(17,24,39,0.65) !important;
         border: 1px solid rgba(255,255,255,0.05) !important;
         border-radius: 14px !important;
@@ -54,23 +54,17 @@ def load_global_styles():
     }
                 
     /* Mini Card Title */
-    div[data-testid="stMarkdownContainer"] .mini-card-title {
-
+    .mini-card-title {
         color: #9CA3AF !important;
-
         font-size: 0.9rem !important;
-
         margin-bottom: 0.35rem !important;
     }
 
 
     /* Mini Card Value */
-    div[data-testid="stMarkdownContainer"] .mini-card-value {
-
+    .mini-card-value {
         font-size: 1.8rem !important;
-
         font-weight: 700 !important;
-
         color: #F3F4F6 !important;
     }
 
