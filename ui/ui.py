@@ -6,7 +6,9 @@ from streamlit_autorefresh import st_autorefresh
 import time
 
 from styles import load_global_styles
-from components import metric_card, status_card, insights_card, hero_header, subtitle, hero_subtext, subtitle_subtext, chart_container
+from components import (metric_card, status_card, insights_card, mini_card,
+                        hero_header, subtitle, hero_subtext, subtitle_subtext, 
+                        chart_container)
 
 #setting the page title
 st.set_page_config(
@@ -769,31 +771,30 @@ def render_observability():
         
         left_col, right_col = st.columns(2)
         with left_col:
-            with st.container(border=True):
-                st.subheader("Infrastructure Health")
-                if db_status == "connected":
-                    status_card("Database", "Connected", "green")
-                else:
-                    status_card("Database", "Connection issue", "red")
-
-                st.write("CPU Utilization")
-                st.progress(dashboard_metrics["health"]["cpu_usage"][0] / 100)
+            st.subheader("Infrastructure Health")
+            if db_status == "connected":
+                status_card("Database", "Connected", "green")
+            else:
+                status_card("Database", "Connection issue", "red")
 
         with right_col:
-            with st.container(border=True):
-                st.subheader("Model Operations")
+            if dashboard_metrics["health"]["models_count"]==0:
+                model_count_info = f"No ML models are currently loaded."
+            elif dashboard_metrics["health"]["models_count"]==1:
+                model_count_info = f"{dashboard_metrics["health"]["models_count"]} ML model is currently loaded and ready for inference."
+            else:
+                model_count_info = f"{dashboard_metrics["health"]["models_count"]} ML models are currently loaded and ready for inference."
+            mini_card("Model Avalilability", model_count_info)
 
-                if dashboard_metrics["health"]["models_count"]==0:
-                    model_count_info = f"No ML models are currently loaded."
-                elif dashboard_metrics["health"]["models_count"]==1:
-                    model_count_info = f"{dashboard_metrics["health"]["models_count"]} ML model is currently loaded and ready for inference."
-                else:
-                    model_count_info = f"{dashboard_metrics["health"]["models_count"]} ML models are currently loaded and ready for inference."
-                insights_card("Model Avalilability", model_count_info)
+        l_col, r_col = st.columns(2)
+        with l_col:
+            st.write("CPU Utilization")
+            st.progress(dashboard_metrics["health"]["cpu_usage"][0] / 100)
 
-                metric_card(
-                    "Uptime", f"{dashboard_metrics["health"]["uptime"]}"
-                )
+        with r_col:
+            mini_card(
+                "Uptime", f"{dashboard_metrics["health"]["uptime"]}"
+            )
 
         #Health table
         health_table =pd.DataFrame(
