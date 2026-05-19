@@ -766,9 +766,10 @@ def render_observability():
             )
         
         #columns for infra+CPU and Model+Uptime
-        with st.container(border=True):
-            left_col, right_col = st.columns(2)
-            with left_col:
+        
+        left_col, right_col = st.columns(2)
+        with left_col:
+            with st.container(border=True):
                 st.subheader("Infrastructure Health")
                 if db_status == "connected":
                     status_card("Database", "Connected", "green")
@@ -778,8 +779,8 @@ def render_observability():
                 st.write("CPU Utilization")
                 st.progress(dashboard_metrics["health"]["cpu_usage"][0] / 100)
 
-        with st.container(border=True):
-            with right_col:
+        with right_col:
+            with st.container(border=True):
                 st.subheader("Model Operations")
 
                 if dashboard_metrics["health"]["models_count"]==0:
