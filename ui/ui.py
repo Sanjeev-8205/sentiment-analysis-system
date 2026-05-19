@@ -119,6 +119,9 @@ if "prediction_result" not in st.session_state:
 if "job_id" not in st.session_state:
     st.session_state.job_id = None
 
+if "ai_summary" not in st.session_state:
+    st.session_state.ai_summary = None
+
 st.title("✨ AI Observability and Intelligence Platform")
 st.caption("Real-time monitoring, inference analytics, and AI-driven operational intelligence for production-scale ML systems.")
 
@@ -328,9 +331,8 @@ def render_ai_intelligence():
     hero_header("AI Intelligence")
     hero_subtext("Generate LLM-powered summaries, topic insights, anomaly detection, and enterprise-scale feedback intelligence.")
 
-    summary_container = st.container()
-    telemetry_container = st.container()
-    recommendation_container = st.container()
+    #telemetry_container = st.container()
+    #recommendation_container = st.container()
     
     if st.session_state.completed_job_data:
 
@@ -353,7 +355,10 @@ def render_ai_intelligence():
 
         summary_type = SUMMARY_MAPPING[selected_option]
 
+        summary_container = st.empty()
+
         if st.button("Generate AI Insights"):
+
             with st.spinner("Analyzing reviews with AI..."):
                 response = requests.get(
                     f"{BASE_URL}/batch/job/{st.session_state.job_id}/summary",
@@ -364,13 +369,17 @@ def render_ai_intelligence():
                 if response.status_code == 200:
                     data = response.json()
 
-                    st.caption("AI Summary")
-
-                    with summary_container:
-                        st.markdown(data["summary"])
+                    st.session_state.ai_summary = data["summary"]
 
                 else:
                     st.error("Failed to generate insights. Try again.")
+
+        if st.session_state.ai_summary:
+
+            with summary_container.container(height=500):
+                st.caption("AI Summary")
+                with st.expander("View AI Summary", expanded=True):
+                    st.markdown(st.session_state.ai_summary)
 
 def render_observability():
 
