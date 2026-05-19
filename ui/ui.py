@@ -98,6 +98,25 @@ if "dashboard_metrics" not in st.session_state:
 
 dashboard_metrics = st.session_state.dashboard_metrics
 
+# =========================
+# SESSION STATE INIT
+# =========================
+
+if "completed_job_data" not in st.session_state:
+    st.session_state.completed_job_data = None
+
+if "polling_started" not in st.session_state:
+    st.session_state.polling_started = False
+
+if "failed_job" not in st.session_state:
+    st.session_state.failed_job = False
+
+if "prediction_result" not in st.session_state:
+    st.session_state.prediction_result = None
+
+if "job_id" not in st.session_state:
+    st.session_state.job_id = None
+
 st.title("✨ AI Observability and Intelligence Platform")
 st.caption("Real-time monitoring, inference analytics, and AI-driven operational intelligence for production-scale ML systems.")
 
@@ -778,7 +797,7 @@ def render_observability():
 
             st.subheader("Uptime")
             metric_card(
-                "Uptime", f"{dashboard_metrics["health"]["uptime"]}", label_visibility="collapsed"
+                "Uptime", f"{dashboard_metrics["health"]["uptime"]}"
             )
 
         #Health table

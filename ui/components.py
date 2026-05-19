@@ -1,95 +1,114 @@
 import streamlit as st
 
 def metric_card(title, value, delta=None):
-
     st.markdown(f"""
-    <div class="metric-card">
-                
-        <p style="color:#9CA3AF;font-size:0.9rem;">
+    <div style="
+        background: rgba(17,24,39,0.88);
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 18px;
+        padding: 1.4rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+    ">
+        <p style="color:#9CA3AF; font-size:0.9rem; margin:0 0 8px 0;">
             {title}
         </p>
-
-        <h2 style="margin:0;">
+        <h2 style="margin:0; color:#F9FAFB;">
             {value}
         </h2>
-
-        <p style="color:#10B981">
+        <p style="color:#10B981; margin:4px 0 0 0;">
             {delta if delta else ""}
         </p>
-
     </div>
     """, unsafe_allow_html=True)
 
 def status_card(title, status, color):
-
     st.markdown(f"""
-    <div class="metric-card">
-
+    <div style="
+        background: rgba(17,24,39,0.88);
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 18px;
+        padding: 1.4rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+    ">
         <div style="
             display:flex;
             justify-content:space-between;
             align-items:center;
         ">
-
-            <span>{title}</span>
-
-            <span style="
-                color:{color};
-                font-weight:600;
-            ">
+            <span style="color:#F9FAFB;">{title}</span>
+            <span style="color:{color}; font-weight:600;">
                 ● {status}
             </span>
-
         </div>
-
     </div>
     """, unsafe_allow_html=True)
 
 def insights_card(title, content):
-
     st.markdown(f"""
-    <div class="metric-card">
-
-        <h4 style="margin-bottom:0.5rem;">
+    <div style="
+        background: rgba(17,24,39,0.88);
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 18px;
+        padding: 1.4rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+    ">
+        <h4 style="margin-bottom:0.5rem; color:#F9FAFB;">
             {title}
         </h4>
-
-        <p style="
-            color:#D1D5DB;
-            line-height:1.6;
-        ">
+        <p style="color:#D1D5DB; line-height:1.6; margin:0;">
             {content}
         </p>
-
     </div>
     """, unsafe_allow_html=True)
 
 def hero_header(title):
     st.markdown(f"""
-    <div class="section-header">
+    <div style="
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 0.3rem;
+        color: #F9FAFB;
+    ">
         {title}
     </div>
     """, unsafe_allow_html=True)
 
 def hero_subtext(text):
     st.markdown(f"""
-    <div class="section-subtext">
+    <div style="
+        color: #9CA3AF;
+        margin-bottom: 2rem;
+    ">
         {text}
     </div>
     """, unsafe_allow_html=True)
 
 def subtitle(title):
     st.markdown(f"""
-    <div class="section-subtitle">
+    <div style="
+        font-size: 1.15rem;
+        font-weight: 600;
+        color: #F3F4F6;
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+    ">
         {title}
     </div>
     """, unsafe_allow_html=True)
 
 def subtitle_subtext(text):
     st.markdown(f"""
-        <div class="section-subtitle-subtext">
-            {text}
-        </div>
+    <div style="
+        color: #9CA3AF;
+        font-size: 0.92rem;
+        line-height: 1.5;
+        margin-bottom: 1.2rem;
+    ">
+        {text}
+    </div>
     """, unsafe_allow_html=True)
 
 def chart_container(fig, title, subtitle=None):
