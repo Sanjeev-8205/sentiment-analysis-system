@@ -42,6 +42,16 @@ def load_global_styles():
         border: 1px solid rgba(99,102,241,0.45) !important;
         transform: translateY(-2px) !important;
     }           
+                
+    /* Mini Card */
+    div[data-testid="stMarkdownContainer"] .mini-card {
+        background: rgba(17,24,39,0.65) !important;
+        border: 1px solid rgba(255,255,255,0.05) !important;
+        border-radius: 14px !important;
+        padding: 1rem !important;
+        margin-top: 0.5rem !important;
+        margin-bottom: 0.5rem !important;
+    }
 
     /* Section Headers */
     .section-header {
