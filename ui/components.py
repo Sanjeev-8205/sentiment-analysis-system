@@ -112,6 +112,7 @@ def subtitle_subtext(text):
     """, unsafe_allow_html=True)
 
 def chart_container(fig, title, subtitle=None):
+    fig.update_layout(height=350)
 
     with st.container(border=True):
 
