@@ -205,7 +205,7 @@ def render_overview():
                 fig_tph = px.line(
                     tph,
                     x = "hour",
-                    y = "count",
+                    y = "throughput",
                     markers = True
                 )
 
