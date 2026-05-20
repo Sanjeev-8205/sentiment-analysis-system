@@ -151,33 +151,71 @@ def render_overview():
     le_col, ri_col = st.columns([1.7,1])
 
     with le_col:
-        #Latency Trends
-        latency = dashboard_metrics["analytics"]["latency_trends"][1]
+        overview_chart = st.tabs([
+            "Latency Over Time",
+            "Request Volume",
+            "Throughput Trend"
+        ])
 
-        latency_trends = pd.DataFrame(latency)
+        if overview_chart == "Latency Over Time":
+            #Latency Trends
+            latency = dashboard_metrics["analytics"]["latency_trends"][1]
 
-        if not latency_trends.empty:
-            fig_latency_trends = px.line(
-                latency_trends,
-                x = "time",
-                y = "avg_latency",
-                markers = True
-            )
+            latency_trends = pd.DataFrame(latency)
 
-            chart_container(fig_latency_trends, "Latency Trends Over Time")
+            if not latency_trends.empty:
+                fig_latency_trends = px.line(
+                    latency_trends,
+                    x = "time",
+                    y = "avg_latency",
+                    markers = True
+                )
+
+                chart_container(fig_latency_trends, "Latency Trends Over Time")
+            
+            else:
+                st.info("No data yet.")
         
+        elif overview_chart == "Request Volume":
+            #Requests Per Hour
+            requests_per_hour = dashboard_metrics["analytics"]["predictions_over_time"][0]
+
+            rph = pd.DataFrame(requests_per_hour)
+
+            if not rph.empty:
+                fig_rph = px.line(
+                    rph,
+                    x = "day",
+                    y = "count",
+                    markers = True
+                )
+
+                chart_container(fig_rph, "Requests Per Hour")
+            
+            else:
+                st.info("You have not made any predictions yet. Make predictions to view the results.")
+
         else:
-            st.info("You have not made any predictions yet. Make predictions to view the results.")
-    
+            #Throughput Per Hour
+            throughput_per_hour = dashboard_metrics["analytics"]["throughput_per_hour"]
 
-    subtitle("Live System Status")
+            tph = pd.DataFrame(throughput_per_hour)
 
-    subtitle("Latest AI Insights")
+            if not tph.empty:
+                fig_tph = px.line(
+                    rph,
+                    x = "day",
+                    y = "count",
+                    markers = True
+                )
 
-    st.info(f"""
+                chart_container(fig_tph, "Throughput Per Hour")
+
+    with ri_col:
+        #Insights
+        insights_card("AI Insights",f"""
             Latency increased 12% during recent BERT batch jobs.
-            Bi-LSTM currently provides best latency/accuracy balance."""
-    )
+            Bi-LSTM currently provides best latency/accuracy balance.""")
 
 def render_live_inference():
         
@@ -458,7 +496,7 @@ def render_observability():
 
         with col2:
             #Prediction Over Time
-            prediction_ = dashboard_metrics["analytics"]["predictions_over_time"]
+            prediction_ = dashboard_metrics["analytics"]["predictions_over_time"][0]
 
             prediction_over_time = pd.DataFrame(prediction_)
 
@@ -470,7 +508,7 @@ def render_observability():
                     markers = True
                 )
 
-                chart_container(fig_predictions, "Predictions Over Time")
+                chart_container(fig_predictions, "Predictions Per Day")
             
             else:
                 st.info("You have not made any predictions yet. Make predictions to view the results.")

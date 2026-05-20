@@ -11,6 +11,7 @@ def metric_card(title, value, delta=None):
         padding: 1.4rem;
         margin-bottom: 1rem;
         box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+        min-height: 120px;
     ">
         <p style="color:#9CA3AF; font-size:0.9rem; margin:0 0 8px 0;">
             {title}
