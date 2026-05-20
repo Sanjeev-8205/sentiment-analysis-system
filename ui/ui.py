@@ -148,6 +148,28 @@ def render_overview():
     with col5:
         metric_card("Uptime", dashboard_metrics["health"]["uptime"])
 
+    le_col, ri_col = st.columns([1.7,1])
+
+    with le_col:
+        #Latency Trends
+        latency = dashboard_metrics["analytics"]["latency_trends"][1]
+
+        latency_trends = pd.DataFrame(latency)
+
+        if not latency_trends.empty:
+            fig_latency_trends = px.line(
+                latency_trends,
+                x = "time",
+                y = "avg_latency",
+                markers = True
+            )
+
+            chart_container(fig_latency_trends, "Latency Trends Over Time")
+        
+        else:
+            st.info("You have not made any predictions yet. Make predictions to view the results.")
+    
+
     subtitle("Live System Status")
 
     subtitle("Latest AI Insights")
@@ -417,24 +439,6 @@ def render_observability():
 
             chart_container(fig_sentiment, "Sentiment Distribution")
 
-            #Prediction Over Time
-            prediction_ = dashboard_metrics["analytics"]["predictions_over_time"]
-
-            prediction_over_time = pd.DataFrame(prediction_)
-
-            if not prediction_over_time.empty:
-                fig_predictions = px.line(
-                    prediction_over_time,
-                    x = "day",
-                    y = "count",
-                    markers = True
-                )
-
-                chart_container(fig_predictions, "Predictions Over Time")
-            
-            else:
-                st.info("You have not made any predictions yet. Make predictions to view the results.")
-
             #Model Usage Distribution
             models_ = dashboard_metrics["analytics"]["model_usage_distribution"]
 
@@ -453,20 +457,20 @@ def render_observability():
                 st.info("You have not made any predictions yet. Make predictions to view the results.")
 
         with col2:
-            #Latency Trends
-            latency = dashboard_metrics["analytics"]["latency_trends"][1]
+            #Prediction Over Time
+            prediction_ = dashboard_metrics["analytics"]["predictions_over_time"]
 
-            latency_trends = pd.DataFrame(latency)
+            prediction_over_time = pd.DataFrame(prediction_)
 
-            if not latency_trends.empty:
-                fig_latency_trends = px.line(
-                    latency_trends,
-                    x = "time",
-                    y = "avg_latency",
+            if not prediction_over_time.empty:
+                fig_predictions = px.line(
+                    prediction_over_time,
+                    x = "day",
+                    y = "count",
                     markers = True
                 )
 
-                chart_container(fig_latency_trends, "Latency Trends Over Time")
+                chart_container(fig_predictions, "Predictions Over Time")
             
             else:
                 st.info("You have not made any predictions yet. Make predictions to view the results.")
