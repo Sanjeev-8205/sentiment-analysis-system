@@ -151,13 +151,13 @@ def render_overview():
     le_col, ri_col = st.columns([1.7,1])
 
     with le_col:
-        overview_chart = st.tabs([
+        t1, t2, t3 = st.tabs([
             "Latency Over Time",
             "Request Volume",
             "Throughput Trend"
         ])
 
-        if overview_chart == "Latency Over Time":
+        with t1:
             #Latency Trends
             latency = dashboard_metrics["analytics"]["latency_trends"][1]
 
@@ -176,7 +176,7 @@ def render_overview():
             else:
                 st.info("No data yet.")
         
-        elif overview_chart == "Request Volume":
+        with t2:
             #Requests Per Hour
             requests_per_hour = dashboard_metrics["analytics"]["predictions_over_time"][0]
 
@@ -195,7 +195,7 @@ def render_overview():
             else:
                 st.info("You have not made any predictions yet. Make predictions to view the results.")
 
-        else:
+        with t3:
             #Throughput Per Hour
             throughput_per_hour = dashboard_metrics["analytics"]["throughput_per_hour"]
 
@@ -213,9 +213,7 @@ def render_overview():
 
     with ri_col:
         #Insights
-        insights_card("AI Insights",f"""
-            Latency increased 12% during recent BERT batch jobs.
-            Bi-LSTM currently provides best latency/accuracy balance.""")
+        insights_card("AI Insights",f"Latency increased 12% during recent BERT batch jobs.<br>Bi-LSTM currently provides best latency/accuracy balance.")
 
 def render_live_inference():
         
