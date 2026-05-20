@@ -185,7 +185,7 @@ def render_overview():
             if not rph.empty:
                 fig_rph = px.line(
                     rph,
-                    x = "day",
+                    x = "hour",
                     y = "count",
                     markers = True
                 )
@@ -204,7 +204,7 @@ def render_overview():
             if not tph.empty:
                 fig_tph = px.line(
                     rph,
-                    x = "day",
+                    x = "hour",
                     y = "count",
                     markers = True
                 )
